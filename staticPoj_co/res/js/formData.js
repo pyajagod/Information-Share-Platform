@@ -1,0 +1,209 @@
+var gradesubjectCodeMap = {
+    "一年级":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            }
+        },
+    },
+    "二年级":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            }
+        },
+    },
+    "三年级":{
+        subjectMap:{
+          
+            2:{
+                code:2,
+                cn:'数学'
+            },
+           
+        },
+    },
+    "四年级":{
+        subjectMap:{
+           
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            }
+        },
+    },
+    "五年级":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            }
+        },
+    },
+    "六年级":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            }
+        },
+    },
+    "初一":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            },
+         
+
+        },
+    },
+    "初二":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            },
+            4:{
+                code:4,
+                cn:'物理'
+            },
+          
+        },
+    },
+    "初三":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            },
+            4:{
+                code:4,
+                cn:'物理'
+            },
+            5:{
+                code:4,
+                cn:'化学'
+            },
+          
+        },
+    },
+    "高一":{
+        subjectMap:{
+            1:{
+                code:1,
+                cn:'语文'
+            },
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            },
+            4:{
+                code:4,
+                cn:'物理'
+            },
+            5:{
+                code:4,
+                cn:'化学'
+            },
+         
+        },
+    },
+    "高二":{
+        subjectMap:{
+         
+            2:{
+                code:2,
+                cn:'数学'
+            },
+            3:{
+                code:3,
+                cn:'英语'
+            },
+           
+           
+         
+        },
+    },
+    "高三":{
+        subjectMap:{
+          
+            2:{
+                code:2,
+                cn:'数学'
+            },
+           
+           
+           
+        },
+    }
+}
+window.gradesubjectCodeMap = gradesubjectCodeMap;
+
+

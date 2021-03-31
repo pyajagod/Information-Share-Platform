@@ -1,0 +1,1 @@
+document.write("<marquee behavior=scroll scrollDelay=80 scrollamount=3 onmouseover=this.stop() onmouseout=this.start()></marquee>");

@@ -1,0 +1,180 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/q_functions.php");
+include("../class/user.php");
+include("../data/cache/MemberLevel.php");
+$link=db_connect();
+$empire=new mysqlquery();
+$ecmsreurl=2;
+$softid=(int)$_GET['softid'];
+$pathid=(int)$_GET['pathid'];
+
+//扣点函数
+function ViewOnlineKFen($showdown_r,$u,$userid,$classid,$softid,$pathid,$r){
+	global $user_tablename,$level_r,$user_group,$user_todaydate,$user_todaydown,$user_userid,$dbtbpre,$public_r,$user_downdate,$user_downfen,$user_username,$empire,$have_bak,$have_fen;
+	if($showdown_r[2])
+	{
+		//下载次数限制
+		$setuserday="";
+		if($level_r[$u[$user_group]][daydown])
+		{
+			$thetoday=date("Y-m-d");
+			if($thetoday!=$u[$user_todaydate])
+			{
+				$setuserday="update ".$user_tablename." set ".$user_todaydate."='".$thetoday."',".$user_todaydown."=1 where ".$user_userid."='$userid'";
+			}
+			else
+			{
+				if($u[$user_todaydown]>=$level_r[$u[$user_group]][daydown])
+				{
+					echo"<script>alert('您的下载与观看次数已超过系统限制(".$level_r[$u[$user_group]][daydown]." 次)!');window.close();</script>";
+					exit();
+				}
+				$setuserday="update ".$user_tablename." set ".$user_todaydown."=".$user_todaydown."+1 where ".$user_userid."='$userid'";
+			}
+		}
+		//点数是否足够
+		$showdown_r[3]=intval($showdown_r[3]);
+		if($showdown_r[3])
+		{
+			if($have_fen==1)
+			{
+				//去除点数
+				$usql=$empire->query("update ".$user_tablename." set ".$user_downfen."=".$user_downfen."-".$showdown_r[3]." where ".$user_userid."='$userid'");
+			}
+			if($have_bak==0)
+			{
+				//备份下载记录
+				$utfusername=doUtfAndGbk($u[$user_username],1);
+				BakDown($softid,$pathid,$userid,$utfusername,$r[softname],$showdown_r[3]);
+			}
+		}
+		//更新用户下载次数
+		if($setuserday)
+		{
+			$usql=$empire->query($setuserday);
+		}
+	}
+	//总下载数据增一
+    DoOnclick($softid,$r);
+}
+
+if(!$softid)
+{
+	echo"<script>alert('此影片不存在');window.close();</script>";
+	exit();
+}
+$query="select * from {$dbtbpre}down where softid='$softid'";
+$r=$empire->fetch1($query);
+if(!$r[softid])
+{
+	echo"<script>alert('此影片不存在');window.close();</script>";
+	exit();
+}
+//区分下载地址
+$path_r=explode("\r\n",$r[onlinepath]);
+if(!$path_r[$pathid])
+{
+	echo"<script>alert('此影片不存在');window.close();</script>";
+	exit();
+}
+$showdown_r=explode("::::::",$path_r[$pathid]);
+//下载权限
+$downgroup=$showdown_r[2];
+if($downgroup)
+{
+	$user=islogin();
+	//取得会员资料
+	$u=$empire->fetch1("select * from ".$user_tablename." where ".$user_userid."='$user[userid]' and ".$user_rnd."='$user[rnd]' limit 1");
+	if(empty($u[$user_userid]))
+	{
+		echo"<script>alert('同一帐号，只能一人在线');window.close();</script>";
+        exit();
+	}
+	//下载次数限制
+	if($level_r[$u[$user_group]][daydown])
+	{
+		$thetoday=date("Y-m-d");
+		if($thetoday==$u[$user_todaydate])
+		{
+			if($u[$user_todaydown]>=$level_r[$u[$user_group]][daydown])
+			{
+				echo"<script>alert('您的下载与观看次数已超过系统限制(".$level_r[$u[$user_group]][daydown]." 次)!');window.close();</script>";
+				exit();
+			}
+		}
+	}
+	if($level_r[$downgroup][level]>$level_r[$u[$user_group]][level])
+	{
+		echo"<script>alert('您的会员级别不足(".$level_r[$downgroup][groupname].")，没有观看此影片的权限!');window.close();</script>";
+		exit();
+	}
+	//点数是否足够
+	$have_bak=0;
+	$have_fen=0;
+	if($showdown_r[3])
+	{
+			//---------是否有历史记录
+			$bakr=$empire->fetch1("select softid,truetime from {$dbtbpre}downdown where softid='$softid' and pathid='$pathid' and userid='$user[userid]' order by downid desc limit 1");
+			if($bakr[softid]&&(time()-$bakr[truetime]<=$public_r[redodown]*3600))
+			{
+				$have_bak=1;
+			}
+			else
+			{
+				//包月卡
+				if($u[$user_downdate]-time()>0)
+				{}
+				//点数
+				else
+				{
+			       if($showdown_r[3]>$u[$user_downfen])
+			       {
+					echo"<script>alert('您的点数不足 $showdown_r[3] 点，无法观看此影片');window.close();</script>";
+					exit();
+			       }
+				   $have_fen=1;
+				}
+			}
+	}
+}
+//验证码
+$pass=md5("wm_chief".$public_r[downpass].$user[userid]);
+$op=GetOnlinePass();
+$url="../phome?phome=GetSofturl&softid=$softid&pathid=$pathid&pass=".$pass."&p=".$user[userid].":::".$user[rnd]."&onlinetime=".$op[0]."&onlinepass=".$op[1];
+$trueurl=ReturnDSofturl($showdown_r[1],$showdown_r[4],'../',0);//实际地址
+$playerpass="wm_chief";
+//自动识别播放器
+if(empty($r[playerid]))
+{
+	$ftype=GetFiletype($showdown_r[1]);
+	if($ftype=='.swf')
+	{
+		@include("flasher.php");
+	}
+	elseif($ftype=='.flv')
+	{
+		@include("flver.php");
+	}
+	elseif(strstr($realplayertype,','.$ftype.','))
+	{
+		@include("realplayer.php");
+	}
+	else
+	{
+		@include("mediaplayer.php");
+	}
+}
+else
+{
+	$playerr=$empire->fetch1("select filename from {$dbtbpre}downplayer where id='$r[playerid]'");
+	if($playerr['filename'])
+	{
+		@include($playerr[filename]);
+	}
+}
+db_close();
+$empire=null;
+?>

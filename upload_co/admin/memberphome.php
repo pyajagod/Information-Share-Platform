@@ -1,0 +1,105 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/MemberLevel.php");
+include("../class/user.php");
+$link=db_connect();
+$empire=new mysqlquery();
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+//验证用户
+$lur=is_login();
+$myuserid=$lur[userid];
+$myusername=$lur[username];
+
+include('../class/memberfun.php');
+if($phome=="EditMember")//修改会员
+{
+	$add=$_POST;
+	admin_EditMember($add,$myuserid,$myusername);
+}
+elseif($phome=="DelMember")//删除会员
+{
+	$userid=$_GET['userid'];
+	admin_DelMember($userid,$myuserid,$myusername);
+}
+elseif($phome=="DelMember_all")//批量删除会员
+{
+	$userid=$_POST['userid'];
+	admin_DelMember_all($userid,$myuserid,$myusername);
+}
+elseif($phome=="EditVideo")//修改视频
+{
+	$add=$_POST;
+	admin_EditVideo($add,$myuserid,$myusername);
+}
+elseif($phome=="DelVideo")//删除视频
+{
+	$path_id=$_GET['path_id'];
+	admin_DelVideo($path_id,$myuserid,$myusername);
+}
+elseif($phome=="DelVideo_all")//批量删除视频
+{
+	$path_id=$_POST['pathid'];
+	admin_DelVideo_all($path_id,$myuserid,$myusername);
+}
+elseif($phome=="AddMemberGroup")//增加会员组
+{
+	$add=$_POST[add];
+	AddMemberGroup($add,$myuserid,$myusername);
+}
+elseif($phome=="EditMemberGroup")//修改会员组
+{
+	$add=$_POST[add];
+	EditMemberGroup($add,$myuserid,$myusername);
+}
+elseif($phome=="DelMemberGroup")//删除会员组
+{
+	$groupid=$_GET[groupid];
+	DelMemberGroup($groupid,$myuserid,$myusername);
+}
+elseif($phome=="AddCard")//增加点卡
+{
+	$add=$_POST['add'];
+	AddCard($add,$myuserid,$myusername);
+}
+elseif($phome=="AddMoreCard")//批量增加点卡
+{
+	$add=$_POST;
+	AddMoreCard($add,$myuserid,$myusername);
+}
+elseif($phome=="EditCard")//修改点卡
+{
+	$add=$_POST['add'];
+	EditCard($add,$myuserid,$myusername);
+}
+elseif($phome=="DelCard")//删除点卡
+{
+	$cardid=$_GET['cardid'];
+	DelCard($cardid,$myuserid,$myusername);
+}
+elseif($phome=="GetDown_all")//批量赠送点数
+{
+	$downfen=$_POST['downfen'];
+	GetDown_all($downfen,$myuserid,$myusername);
+}
+elseif($phome=='AddBuyGroup')//增加充值类型
+{
+	AddBuyGroup($_POST,$myuserid,$myusername);
+}
+elseif($phome=='EditBuyGroup')//修改充值类型
+{
+	EditBuyGroup($_POST,$myuserid,$myusername);
+}
+elseif($phome=='DelBuyGroup')//删除充值类型
+{
+	DelBuyGroup($_GET['id'],$myuserid,$myusername);
+}
+else
+{printerror("您来自的链接不存在","history.go(-1)");}
+db_close();
+$empire=null;
+?>

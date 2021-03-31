@@ -1,0 +1,63 @@
+html, body, div,
+h1, h2, h3, h4, h5, h6,
+hr, p, blockquote,
+dl, dt, dd, ul, ol, li,
+pre, form, fieldset, object, code,
+legend, button, input, textarea, label,
+th, td, a, img {
+	margin: 0;
+	padding: 0;
+	border: 0;
+    outline: 0;
+	list-style: none;
+    vertical-align: middle!important;
+    box-sizing: border-box;
+}
+
+a{
+	display: block;
+	text-decoration: none;
+	color: #fff;
+}
+
+html, body {
+    font: 18px/1 "Microsoft YaHei","PingFang SC",sans-serif;
+    height: 100%;
+    color: #333;
+    background-color: #fff;
+}
+
+@font-face {
+    font-family:'DIN';
+    src:url('../fonts/DIN Medium.ttf');
+}
+
+/*æ¸…é™¤å†…å¤–è¾¹è·*/
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+.fl{
+    float: left;
+}
+
+.fr{
+    float: right;
+}
+
+/*æ¸…é™¤æµ®åŠ¨*/
+.clearfix{
+	*zoom=0;
+}
+
+.clearfix:after{
+	display: block;
+	content: "";
+	height: 100%;
+	clear: both;
+	visibility: hidden;
+}
+
+
+

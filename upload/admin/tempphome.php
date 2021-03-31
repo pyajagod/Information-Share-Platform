@@ -1,0 +1,99 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/class.php");
+include("../class/t_functions.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+$lur=is_login();
+$myuserid=$lur[userid];
+$myusername=$lur[username];
+
+include('../class/tempfun.php');
+//增加列表模板
+if($phome=="AddListtemp")
+{
+	$add=$_POST;
+	AddListtemp($add,$myuserid,$myusername);
+}
+//修改列表模板
+elseif($phome=="EditListtemp")
+{
+	$add=$_POST;
+	EditListtemp($add,$myuserid,$myusername);
+}
+//删除列表模板
+elseif($phome=="DelListtemp")
+{
+	$tempid=$_GET['tempid'];
+	DelListtemp($tempid,$myuserid,$myusername);
+}
+//默认列表模板
+elseif($phome=="DefaultListtemp")
+{
+	$tempid=$_GET['tempid'];
+	DefaultListtemp($tempid,$myuserid,$myusername);
+}
+//增加内容模板
+elseif($phome=="AddSofttemp")
+{
+	$add=$_POST;
+	AddSofttemp($add,$myuserid,$myusername);
+}
+//修改内容模板
+elseif($phome=="EditSofttemp")
+{
+	$add=$_POST;
+	EditSofttemp($add,$myuserid,$myusername);
+}
+//删除内容模板
+elseif($phome=="DelSofttemp")
+{
+	$tempid=$_GET['tempid'];
+	DelSofttemp($tempid,$myuserid,$myusername);
+}
+elseif($phome=="EditTemplate")//修改模板
+{
+	$templatename=$_POST['templatename'];
+	$temptext=$_POST['temptext'];
+	$changedown=$_POST['changedown'];
+	EditTemplate($templatename,$temptext,$_POST,$changedown,$myuserid,$myusername);
+}
+elseif($phome=='AddTempvar')//增加模板变量
+{
+	AddTempvar($_POST,$myuserid,$myusername);
+}
+elseif($phome=='EditTempvar')//修改模板变量
+{
+	EditTempvar($_POST,$myuserid,$myusername);
+}
+elseif($phome=='DelTempvar')//删除模板变量
+{
+	$varid=$_GET['varid'];
+	DelTempvar($varid,$myuserid,$myusername);
+}
+elseif($phome=='LoadTempGroup')//导出模板
+{
+	LoadTempGroup($_POST,$myuserid,$myusername);
+}
+elseif($phome=='LoadInTempGroup')//导入模板
+{
+	$file=$_FILES['file']['tmp_name'];
+    $file_name=$_FILES['file']['name'];
+    $file_type=$_FILES['file']['type'];
+    $file_size=$_FILES['file']['size'];
+	LoadInTempGroup($_POST,$file,$file_name,$file_type,$file_size,$myuserid,$myusername);
+}
+else
+{
+	printerror("您来自的链接不存在","history.go(-1)");
+}
+db_close();
+$empire=null;
+?>

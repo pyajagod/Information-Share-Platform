@@ -1,0 +1,1 @@
+document.write("<select name=classid><option value=0>—°‘Ò∑÷¿‡</option></select>");

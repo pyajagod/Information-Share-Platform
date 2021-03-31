@@ -1,0 +1,93 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/class.php");
+include("../data/cache/MemberLevel.php");
+include('../class/user.php');
+include("../class/t_functions.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$lur=is_login();
+$myuserid=$lur[userid];
+$myusername=$lur[username];
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+
+include('../class/infofun.php');
+if($phome=="AddSoft")//增加软件
+{
+	$file=$_FILES['file']['tmp_name'];
+    $file_name=$_FILES['file']['name'];
+    $file_type=$_FILES['file']['type'];
+    $file_size=$_FILES['file']['size'];
+	AddSoft($_POST,$file,$file_name,$file_size,$file_type,$myuserid,$myusername);
+}
+elseif($phome=="EditSoft")//修改软件
+{
+	$file=$_FILES['file']['tmp_name'];
+    $file_name=$_FILES['file']['name'];
+    $file_type=$_FILES['file']['type'];
+    $file_size=$_FILES['file']['size'];
+	EditSoft($_POST,$file,$file_name,$file_size,$file_type,$myuserid,$myusername);
+}
+elseif($phome=="DelSoft")//删除软件
+{
+	DelSoft($_GET,$myuserid,$myusername);
+}
+elseif($phome=="DelSoft_all")//批量删除软件
+{
+	$softid=$_POST['softid'];
+	$bclassid=$_POST['bclassid'];
+	$classid=$_POST['classid'];
+	DelSoft_all($_POST,$myuserid,$myusername);
+}
+elseif($phome=="AddSoftToReHtml")//增加信息生成页面
+{
+	$classid=$_GET['classid'];
+	$dore=$_GET['dore'];
+	AddSoftToReHtml($classid,$dore);
+}
+elseif($phome=="CheckSoft_all")//批量审核软件
+{
+	CheckSoft_all($_POST,$myuserid,$myusername);
+}
+elseif($phome=="CheckSoft")//审核单个软件
+{
+	$softid=$_GET['softid'];
+	$bclassid=$_GET['bclassid'];
+	$classid=$_GET['classid'];
+	CheckSoft($_POST,$myuserid,$myusername);
+}
+elseif($phome=="TopSoft_all")//软件置顶
+{
+	TopSoft_all($_POST,$myuserid,$myusername);
+}
+elseif($phome=="MoveSoft")//移动软件
+{
+	$classid=$_POST[classid];
+	$to_classid=$_POST[to_classid];
+	$softid=$_POST[softid];
+	MoveSoft_all($classid,$to_classid,$softid,$myuserid,$myusername);
+}
+elseif($phome=="CopySoft")//复制软件
+{
+	$classid=$_POST[classid];
+	$to_classid=$_POST[to_classid];
+	$softid=$_POST[softid];
+	CopySoft_all($classid,$to_classid,$softid,$myuserid,$myusername);
+}
+elseif($phome=="ReSingleSoftHtml")//生成单页面
+{
+	ReSingleSoftHtml($myuserid,$myusername);
+}
+else
+{
+	printerror("您来自的链接不存在","history.go(-1)");
+}
+db_close();
+$empire=null;
+?>

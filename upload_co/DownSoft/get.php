@@ -1,0 +1,44 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/q_functions.php");
+include("../class/user.php");
+include("../data/cache/MemberLevel.php");
+$link=db_connect();
+$empire=new mysqlquery();
+if(!$public_r['opengetdown'])
+{
+	printerror('没有开启直接下载','',1);
+}
+$softid=(int)$_GET['softid'];
+$pathid=(int)$_GET['pathid'];
+if(!$softid)
+{
+	printerror('此下载不存在','',1);
+}
+$r=$empire->fetch1("select downpath,softid from {$dbtbpre}down where softid='$softid'");
+if(!$r[softid])
+{
+	printerror('此下载不存在','',1);
+}
+//区分下载地址
+$path_r=explode("\r\n",$r[downpath]);
+if(!$path_r[$pathid])
+{
+	printerror("此下载不存在","",1);
+}
+$showdown_r=explode("::::::",$path_r[$pathid]);
+//下载权限
+$downgroup=$showdown_r[2];
+if($downgroup)
+{
+	$user=islogin();
+}
+//下载
+$pass=md5("wm_chief".$public_r[downpass].$user[userid]);//验证码
+$p=$user[userid].":::".$user[rnd];
+DownSoft($softid,$pathid,$p,$pass);
+db_close();
+$empire=null;
+?>

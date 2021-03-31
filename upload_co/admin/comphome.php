@@ -1,0 +1,59 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/class.php");
+include("../class/t_functions.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+$lur=is_login();
+$myuserid=$lur[userid];
+$myusername=$lur[username];
+
+include('../class/comfun.php');
+if($phome=="RepIp")//批量替换ip
+{
+	RepDownLevel($_POST,$myuserid,$myusername);
+}
+elseif($phome=="DelPl")//删除评论
+{
+	$plid=$_GET['plid'];
+	DelPl($plid,$myuserid,$myusername);
+}
+elseif($phome=="DelPl_all")//批量删除评论
+{
+	$plid=$_POST['plid'];
+	DelPl_all($plid,$myuserid,$myusername);
+}
+elseif($phome=="AddGg")//增加公告
+{
+	$title=$_POST['title'];
+	$ggtext=$_POST['ggtext'];
+	$ggtime=$_POST['ggtime'];
+	AddGg($title,$ggtext,$ggtime,$myuserid,$myusername);
+}
+elseif($phome=="EditGg")//修改公告
+{
+	$ggid=$_POST['ggid'];
+	$title=$_POST['title'];
+	$ggtext=$_POST['ggtext'];
+	$ggtime=$_POST['ggtime'];
+	EditGg($ggid,$title,$ggtext,$ggtime,$myuserid,$myusername);
+}
+elseif($phome=="DelGg")//删除公告
+{
+	$ggid=$_GET['ggid'];
+	DelGg($ggid,$myuserid,$myusername);
+}
+else
+{
+	printerror("您来自的链接不存在","history.go(-1)");
+}
+db_close();
+$empire=null;
+?>

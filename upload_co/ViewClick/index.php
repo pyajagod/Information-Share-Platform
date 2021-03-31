@@ -1,0 +1,42 @@
+<?php
+require("../class/connect.php");
+include("../class/db_sql.php");
+$link=db_connect();
+$empire=new mysqlquery();
+$softid=(int)$_GET['softid'];
+if(!$softid)
+{
+	exit();
+}
+$all=$_GET['all'];
+$month=$_GET['month'];
+$week=$_GET['week'];
+$day=$_GET['day'];
+$r=$empire->fetch1("select count_all,count_month,count_week,count_day from {$dbtbpre}down where softid='$softid'");
+db_close();
+$empire=null;
+if($all)
+{
+?>
+document.getElementById("countalldiv").innerHTML='<?=$r[count_all]?>';
+<?php
+}
+if($month)
+{
+?>
+document.getElementById("countmonthdiv").innerHTML='<?=$r[count_month]?>';
+<?php
+}
+if($week)
+{
+?>
+document.getElementById("countweekdiv").innerHTML='<?=$r[count_week]?>';
+<?php
+}
+if($day)
+{
+?>
+document.getElementById("countdaydiv").innerHTML='<?=$r[count_day]?>';
+<?php
+}
+?>

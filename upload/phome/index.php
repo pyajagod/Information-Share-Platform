@@ -1,0 +1,151 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/q_functions.php");
+include("../class/user.php");
+include("../data/cache/class.php");
+include("../data/cache/MemberLevel.php");
+$link=db_connect();
+$empire=new mysqlquery();
+$phome=$_POST['phome'];
+if(empty($phome))
+{$phome=$_GET['phome'];}
+$myuserid=(int)getcvar('memberuserid');
+$myusername=RepPostVar(getcvar('memberusername'));
+
+if($phome=='AddSoft')
+{
+	include('../class/qinfofun.php');
+}
+
+if($phome=="AddPl")//????????
+{
+	$softid=$_POST['softid'];
+	$plfen=$_POST['plfen'];
+	$content=$_POST['content'];
+	AddPl($softid,$plfen,$content);
+}
+elseif($phome=="AddError")//????????
+{
+	$softid=$_POST['softid'];
+	$errortext=$_POST['errortext'];
+	AddError($softid,$errortext);
+}
+elseif($phome=="register")//???
+{
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$repassword=$_POST['repassword'];
+	$email=$_POST['email'];
+	$key=$_POST['key'];
+	register($username,$password,$repassword,$email,$key);
+}
+elseif($phome=="EditInfo")//???????
+{
+	$userid=$_POST['userid'];
+	$username=$_POST['username'];
+	$oldpassword=$_POST['oldpassword'];
+	$password=$_POST['password'];
+	$repassword=$_POST['repassword'];
+	$email=$_POST['email'];
+	EditInfo($password,$repassword,$oldpassword,$email);
+}
+elseif($phome=="AddSoft")//???????
+{
+	$file=$_FILES['file']['tmp_name'];
+    $file_name=$_FILES['file']['name'];
+    $file_type=$_FILES['file']['type'];
+    $file_size=$_FILES['file']['size'];
+	$imgfile=$_FILES['imgfile']['tmp_name'];
+    $imgfile_name=$_FILES['imgfile']['name'];
+    $imgfile_type=$_FILES['imgfile']['type'];
+    $imgfile_size=$_FILES['imgfile']['size'];
+	AddSoft($_POST,$file,$file_name,$file_size,$file_type,$imgfile,$imgfile_name,$imgfile_size,$imgfile_type,$myuserid,$myusername);
+}
+elseif($phome=="login")//???
+{
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$lifetime=$_POST['lifetime'];
+	$key=$_POST['key'];
+	$location=$_POST['location'];
+	login1($username,$password,$lifetime,$key,$location);
+}
+elseif($phome=="loginmobile")//???
+{
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$lifetime=$_POST['lifetime'];
+	$key=$_POST['key'];
+	$location=$_POST['location'];
+	login2($username,$password,$lifetime,$key,$location);
+}
+elseif($phome=="exit")//???
+{
+	LoginOut1($myuserid,$myusername,$rnd);
+}
+elseif($phome=="DownSoft")//????????
+{
+	$softid=$_GET[softid];
+	$pathid=$_GET[pathid];
+	$p=$_GET[p];
+	$pass=$_GET['pass'];
+	DownSoft($softid,$pathid,$p,$pass);
+}
+elseif($phome=="DownVideo")//???????
+{
+
+	$pathid=$_GET[path_id];
+	$p=$_GET[p];
+	$pass=$_GET['pass'];
+	DownVideo($pathid,$p,$pass);
+
+}
+elseif($phome=="GetSofturl")//?????
+{
+	$softid=$_GET[softid];
+	$pathid=$_GET[pathid];
+	$p=$_GET[p];
+	$pass=$_GET['pass'];
+	$onlinetime=$_GET['onlinetime'];
+	$onlinepass=$_GET['onlinepass'];
+	$movtime=20;
+	GetSofturl($softid,$pathid,$p,$pass,$onlinetime,$onlinepass);
+}
+elseif($phome=="CardGetDown")//?????
+{
+	$username=$_POST['username'];
+	$reusername=$_POST['reusername'];
+	$card_no=$_POST['card_no'];
+	$password=$_POST['password'];
+	CardGetDown($username,$reusername,$card_no,$password);
+}
+elseif($phome=="AddFava")//???????
+{
+	$softid=$_GET['softid'];
+	AddFava($softid);
+}
+elseif($phome=="DelFava_all")//??????????
+{
+	$favaid=$_POST['favaid'];
+	DelFava_All($favaid);
+}
+elseif($phome=="DelFava")//???????
+{
+	$favaid=$_GET['favaid'];
+	DelFava($favaid);
+}
+elseif($phome=="AddVote")//??????
+{
+	$voteid=$_POST['voteid'];
+	$vote=$_POST['vote'];
+	AddVote($voteid,$vote);
+}
+else
+{
+	printerror("???????","history.go(-1)",1);
+}
+db_close();
+$empire=null;
+?>

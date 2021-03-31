@@ -1,0 +1,22 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>纯JS省市区联动</title>  
+    <script type="text/javascript" src="../../staticPoj/jsAddress.js"></script>
+</head>  
+<body>  
+<div>  
+学期：<select id="area"></select>
+学科：<select id="cmbProvince"></select>
+单元：<select id="cmbCity"></select>
+课程：<select id="cmbArea"></select>
+<br /><br />
+
+    <script type="text/javascript">
+        addressInit('area','cmbProvince','cmbCity','cmbArea','一年级上', '语文', '第一单元', '天地人');
+        //addressInit('Select1', 'Select2', 'Select3');
+    </script>
+</div>  
+</body>  
+</html>

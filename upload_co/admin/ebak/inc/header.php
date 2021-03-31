@@ -1,0 +1,32 @@
+<?php
+@include("../../../../action/connect.php");
+if(!defined('InEmpireDown'))
+{
+	exit();
+}
+@include("config.php");
+@include("../../../../data/cache/public.php");
+@include("../../../../action/db_sql.php");
+@include("../../../../action/functions.php");
+@include("../../action/functions.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$myuserid=(int)getcvar('dloginuid');
+$myusername=getcvar('dloginuname');
+$myrnd=getcvar('dloginrnd');
+$mylevel=(int)getcvar('dlogingroupid');
+$editor=3;
+is_login_ebak($myuserid,$myusername,$myrnd);
+//验证权限
+//CheckLevel($myuserid,$myusername,$classid,"dbdata");
+$mydbname=RepPostVar($_GET['mydbname']);
+$mypath=$_GET['mypath'];
+if(empty($mydbname)||empty($mypath))
+{
+	printerror("您来自的链接不存在","history.go(-1)");
+}
+//编码
+DoSetDbChar($b_dbchar);
+$usql=$empire->query("use `$mydbname`");
+?>

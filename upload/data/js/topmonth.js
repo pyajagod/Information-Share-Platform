@@ -1,0 +1,1 @@
+document.write("<table border=\"0\" cellspacing=1 cellpadding=3></table>");

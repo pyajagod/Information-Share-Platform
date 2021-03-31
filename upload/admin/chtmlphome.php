@@ -1,0 +1,132 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/class.php");
+include("../data/cache/MemberLevel.php");
+include("../class/t_functions.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$lur=is_login();
+$myuserid=$lur[userid];
+$myusername=$lur[username];
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+
+include('../class/chtmlfun.php');
+if($phome=="ReHtml")//生成分类列表
+{
+	$classid=$_GET['classid'];
+	ReHtml($classid,$myuserid,$myusername);
+}
+elseif($phome=="ReSoftClass")//生成分类导航
+{
+	ReSoftClass($myuserid,$myusername);
+}
+elseif($phome=="ReZtHtml")//生成专题
+{
+	$ztid=$_GET['ztid'];
+	ReZtHtml($ztid,$myuserid,$myusername);
+}
+elseif($phome=="ReSoftTypeHtml")//生成软件类型
+{
+	$softtypeid=$_GET['softtypeid'];
+	ReSoftTypeHtml($softtypeid,$myuserid,$myusername);
+}
+elseif($phome=="ReUserlistHtml")//生成自定义列表
+{
+	$id=$_GET['id'];
+	ReUserlistHtml($id,$myuserid,$myusername);
+}
+elseif($phome=="ReIndex")//生成首页
+{
+	ReIndex();
+}
+elseif($phome=="ReUserlistAll")//批量生成自定义列表
+{
+	$start=$_GET['start'];
+	$from=$_GET['from'];
+	ReUserlistAll($start,$from,$myuserid,$myusername);
+}
+elseif($phome=="ReZtlistAll")//生成专题列表
+{
+	$start=$_GET['start'];
+	$from=$_GET['from'];
+	ReZtlistAll($start,$from,$myuserid,$myusername);
+}
+elseif($phome=="ReSoftTypelistAll")//生成软件类型列表
+{
+	$start=$_GET['start'];
+	$from=$_GET['from'];
+	ReSoftTypelistAll($start,$from,$myuserid,$myusername);
+}
+elseif($phome=="ReZmlistAll")//字母列表
+{
+	$start=$_GET['start'];
+	$from=$_GET['from'];
+	ReZmlistAll($start,$from,$myuserid,$myusername);
+}
+elseif($phome=="ReHtml_all")//生成分类列表
+{
+	$start=$_GET['start'];
+	$from=$_GET['from'];
+	ReHtml_all($start,$from,$myuserid,$myusername);
+}
+elseif($phome=="ReClassJS_all")//生成栏目导行
+{
+	$start=$_GET['start'];
+	$do=$_GET['do'];
+	$from=$_GET['from'];
+	GetClassJS_all($start,$do,$from);
+}
+elseif($phome=="ReSoftHtml")//生成软件页面
+{
+	$start=$_GET['start'];
+	$classid=$_GET['classid'];
+	$from=$_GET['from'];
+	$retype=$_GET['retype'];
+	$startday=$_GET['startday'];
+	$endday=$_GET['endday'];
+	$startid=$_GET['startid'];
+	$endid=$_GET['endid'];
+	ReSoftHtml($start,$classid,$from,$retype,$startday,$endday,$startid,$endid);
+}
+elseif($phome=="ReListJs")//生成所有js
+{
+	$start=$_GET['start'];
+	$do=$_GET['do'];
+	$from=$_GET['from'];
+	ReJS_all($start,$do,$from,$myuserid,$myusername);
+}
+elseif($phome=="rejs")//生成单js
+{
+	$classid=$_GET['classid'];
+	ReJs_single($classid,$myuserid,$myusername);
+}
+elseif($phome=="resjs")//总js
+{
+	$classid=$_GET['classid'];
+	ReSjs_single($classid,$myuserid,$myusername);
+}
+elseif($phome=="ReGg")//生成公告
+{
+	ReGg();
+}
+elseif($phome=='ChangeDtPage')//更新动态页面
+{
+	ChangeDtPage(0,$myuserid,$myusername);
+}
+elseif($phome=="ReUserpageAll")//生成自定义页面
+{
+	$start=$_GET['start'];
+	$from=$_GET['from'];
+	ReUserpageAll($start,$from,$myuserid,$myusername);
+}
+else
+{printerror("您来自的链接不存在","history.go(-1)");}
+db_close();
+$empire=null;
+?>

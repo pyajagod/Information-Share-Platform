@@ -1,0 +1,61 @@
+<?php
+@include("../class/connect.php");
+if(!defined('InEmpireDown'))
+{
+	exit();
+}
+$myuserid=(int)getcvar('memberuserid');
+$mhavelogin=0;
+if($myuserid)
+{
+	@include("../data/cache/public.php");
+	@include("../class/db_sql.php");
+	@include("../class/user.php");
+	@include("../data/cache/MemberLevel.php");
+	$link=db_connect();
+	$empire=new mysqlquery();
+	$mhavelogin=1;
+	//数据
+	$myusername=RepPostVar(getcvar('memberusername'));
+	$myrnd=RepPostVar(getcvar('memberrnd'));
+	$r=$empire->fetch1("select ".$user_userid.",".$user_username.",".$user_group.",".$user_downfen.",".$user_downdate.",".$user_checked.",".$user_zgroup." from ".$user_tablename." where ".$user_userid."='$myuserid' and ".$user_rnd."='$myrnd' limit 1");
+	if(empty($r[$user_userid])||$r[$user_checked]==0)
+	{
+		EmptyEdownCookie();
+		$mhavelogin=0;
+	}
+	//会员等级
+	if(empty($r[$user_group]))
+	{$groupid=$user_groupid;}
+	else
+	{$groupid=$r[$user_group];}
+	$groupname=$level_r[$groupid]['groupname'];
+	//点数
+	$downfen=$r[$user_downfen];
+	//天数
+	$downdate=0;
+	if($r[$user_downdate])
+	{
+		$downdate=$r[$user_downdate]-time();
+		if($downdate<=0)
+		{$downdate=0;}
+		else
+		{$downdate=round($downdate/(24*3600));}
+	}
+	//$myusername=$r[$user_username];
+	db_close();
+	$empire=null;
+}
+if($mhavelogin==1)
+{
+?>
+document.write("&raquo;&nbsp;<font color=red><b><?=$myusername?></b></font>&nbsp;&nbsp;<a href=\"/ccxm/upload/cp\" target=\"_parent\"><?=$groupname?></a>&nbsp;&nbsp;&nbsp;<a href=\"/ccxm/upload/cp\" target=\"_parent\">控制面板</a>&nbsp;&nbsp;<a href=\"/ccxm/upload/phome?phome=exit&ecmsfrom=9\" onclick=\"return confirm(\'确认要退出?\');\">退出</a>");
+<?
+}
+else
+{
+?>
+document.write("<form name=login method=post action=\"/ccxm/upload/phome/index.php\">    <input type=hidden name=phome value=login>    <input type=hidden name=ecmsfrom value=9>    用户名：<input name=\"username\" type=\"text\" class=\"inputText\" size=\"12\" />&nbsp;    密码：<input name=\"password\" type=\"password\" class=\"inputText\" size=\"12\" />&nbsp;    <input type=\"submit\" name=\"Submit\" value=\"登陆\" class=\"inputSub\" />&nbsp;    <input type=\"button\" name=\"Submit2\" value=\"注册\" class=\"inputSub\" onclick=\"window.open(\'/ccxm/upload/register\');\" /></form>");
+<?
+}
+?>

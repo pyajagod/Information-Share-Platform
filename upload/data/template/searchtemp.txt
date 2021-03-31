@@ -1,0 +1,120 @@
+<?php
+require("../../class/connect.php");
+include("../../data/cache/public.php");
+include("../../class/db_sql.php");
+include("../../class/q_functions.php");
+include("../../data/cache/class.php");
+$link=db_connect();
+$empire=new mysqlquery();
+$editor=1;
+//搜索结果
+$searchid=(int)$_GET['searchid'];
+if(empty($searchid))
+{
+	printerror("没有搜索到相关的下载","history.go(-1)",1);
+}
+$page=(int)$_GET['page'];
+$start=(int)$_GET['start'];
+$search="&searchid=".$searchid;
+$page_line=12;//每页显示链接数
+$line=20;//每页显示记录数
+$offset=$start+$page*$line;//总偏移量
+$add='';
+$search_r=$empire->fetch1("select searchid,keyboard,result_num,classid,softtype,language,soft_sq,searchclass,ztid from {$dbtbpre}downsearch where searchid='$searchid'");
+if(!$search_r[searchid])
+{
+	printerror("没有搜索到相关下载","history.go(-1)",1);
+}
+//搜索栏目
+if($search_r[classid])
+{
+	if($class_r[$search_r[classid]][islast])//终极栏目
+	{
+		$add.="classid='$search_r[classid]' and ";
+	}
+	else
+	{
+		$add.="(".ReturnClass($class_r[$search_r[classid]][sonclass]).") and ";
+	}
+}
+//搜索专题
+if($search_r['ztid'])
+{
+	$add.="ztid='$search_r[ztid]' and ";
+}
+//搜索软件类别
+if($search_r[softtype])
+{
+	$add.="softtype='$search_r[softtype]' and ";
+}
+//界面语言
+if($search_r[language])
+{
+	$add.="language='$search_r[language]' and ";
+}
+//授权形式
+if($search_r[soft_sq])
+{
+	$add.="soft_sq='$search_r[soft_sq]' and ";
+}
+//搜索方式
+if($search_r[searchclass]==0)//查询全部
+{
+	$add.="(softname like '%$search_r[keyboard]%' or softsay like '%$search_r[keyboard]%')";
+}
+elseif($search_r[searchclass]==1)//按软件名查询
+{
+	$add.="softname like '%$search_r[keyboard]%'";
+}
+elseif($search_r[searchclass]==2)//按软件说明查询
+{
+	$add.="softsay like '%$search_r[keyboard]%'";
+}
+else
+{
+	$add.="writer like '%$search_r[keyboard]%'";
+}
+$query="select softid,softname,softsay,classid,softtime,homepage,adduser,writer,filesize,filetype,demo,softpic,count_all,count_month,count_week,soft_sq,soft_fj,downfen,star,language,softtype,foruser,soft_version,titleurl,titlefont,count_day,filename,ztid from {$dbtbpre}down where ".$add;
+$num=$search_r[result_num];
+$query.=" order by softid desc limit $offset,$line";
+$sql=$empire->query($query);
+$listpage=page1($num,$line,$page_line,$start,$page,$search);
+$url="<a href='../../'>首页</a>&nbsp;>&nbsp;<a href='".EDReturnSearchFormUrl()."'>高级搜索</a>&nbsp;>&nbsp;搜索结果";
+$keyboard=$search_r[keyboard];
+?>
+<!--empire.listtemp.top-->
+<?php
+$strlen='[!--strlen--]';
+$subtitle='[!--subtitle--]';
+$formatdate='[!--formatdate--]';
+while($r=$empire->fetch($sql))
+{
+	$softurl=EDReturnSoftPageUrl($r[filename],$r[titleurl]);//链接地址
+	//分类名称
+	$thisclassurl=EDReturnClassUrl($r[classid]);
+	$thisclassname=EdReturnClassname($r[classid]);
+	$classname="[<a href='".$thisclassurl."'>".$thisclassname."</a>]&nbsp;";
+	//授权形式
+	$soft_sq=$class_sqr[$r[soft_sq]][sqname];
+	//软件类型
+	$softtype="<a href='".EDReturnTypeUrl($r[softtype])."'>".$class_sr[$r[softtype]][softtype]."</a>";
+	//语言
+	$language=$class_lr[$r[language]][language];
+	//专题
+	$ztname="<a href='".EDReturnZtUrl($r[ztid])."'>".$class_zr[$r[ztid]][ztname]."</a>";
+	//图片
+	$softpic=$r[softpic]?$r[softpic]:$public_r[sitedown]."data/images/notimg.gif";
+	//软件名
+	$softname=esub($r[softname],$subtitle);
+	//简介
+	$softsay=nl2br(GetEBBcode(esub(strip_tags(trim($r[softsay])),$strlen)));
+	//时间
+	$softtime=date($formatdate,$r[softtime]);
+?>
+<!--empire.listtemp.center-->
+<?php
+}
+db_close();
+$empire=null;
+?>
+<!--empire.listtemp.footer-->

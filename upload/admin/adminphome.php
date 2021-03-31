@@ -1,0 +1,98 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/class.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+if($phome=='login')
+{}
+else
+{
+	$lur=is_login();
+	$myuserid=$lur[userid];
+	$myusername=$lur[username];
+	$myrnd=$lur[rnd];
+}
+
+include("../class/adminfun.php");
+//增加用户
+if($phome=="AddUser")
+{
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$repassword=$_POST['repassword'];
+	$adminclass=$_POST['adminclass'];
+	$groupid=$_POST['groupid'];
+	$add=$_POST[add];
+	AddUser($username,$password,$repassword,$groupid,$adminclass,$add,$myuserid,$myusername);
+}
+//修改用户
+elseif($phome=="EditUser")
+{
+	$userid=$_POST['userid'];
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$repassword=$_POST['repassword'];
+	$adminclass=$_POST['adminclass'];
+	$groupid=$_POST['groupid'];
+	$add=$_POST[add];
+	$oldusername=$_POST['oldusername'];
+	EditUser($userid,$username,$password,$repassword,$groupid,$adminclass,$oldusername,$add,$myuserid,$myusername);
+}
+//删除用户
+elseif($phome=="DelUser")
+{
+	$userid=$_GET['userid'];
+	DelUser($userid,$myuserid,$myusername);
+}
+//登陆
+elseif($phome=="login")
+{
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$key=$_POST['key'];
+	login($username,$password,$key,$_POST);
+}
+//退出
+elseif($phome=="exit")
+{
+	loginout($myuserid,$myusername,$myrnd);
+}
+//修改密码
+elseif($phome=="EditPassword")
+{	$oldpassword=$_POST['oldpassword'];
+	$password=$_POST['password'];
+	$repassword=$_POST['repassword'];
+	EditPassword($myusername,$oldpassword,$password,$repassword);
+}
+//增加用户组
+elseif($phome=="AddGroup")
+{
+	$add=$_POST[gr];
+	AddGroup($add,$myuserid,$myusername);
+}
+//修改用户组
+elseif($phome=="EditGroup")
+{
+	$add=$_POST[gr];
+	EditGroup($add,$myuserid,$myusername);
+}
+//删除用户组
+elseif($phome=="DelGroup")
+{
+	$groupid=$_GET[groupid];
+	DelGroup($groupid,$myuserid,$myusername);
+}
+else
+{
+	printerror("您来自的链接不存在","history.go(-1)");
+}
+db_close();
+$empire=null;
+?>

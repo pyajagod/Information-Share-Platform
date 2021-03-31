@@ -1,0 +1,51 @@
+<?php
+require("../class/connect.php");
+include("../data/cache/public.php");
+include("../class/db_sql.php");
+include("../class/functions.php");
+include("../data/cache/class.php");
+$link=db_connect();
+$empire=new mysqlquery();
+//验证用户
+$phome=$_GET['phome'];
+if(empty($phome))
+{$phome=$_POST['phome'];}
+$lur=is_login();
+$myuserid=$lur[userid];
+$myusername=$lur[username];
+
+include('../class/filefun.php');
+if($phome=="DelFile")//删除附件
+{
+	$fileid=$_GET['fileid'];
+	DelFile($fileid,$myuserid,$myusername);
+}
+elseif($phome=="DelFile_all")//批量删除附件
+{
+	$fileid=$_POST['fileid'];
+	DelFile_all($fileid,$myuserid,$myusername);
+}
+elseif($phome=="TranFile")//上传文件
+{
+	$file=$_FILES['file']['tmp_name'];
+    $file_name=$_FILES['file']['name'];
+    $file_type=$_FILES['file']['type'];
+    $file_size=$_FILES['file']['size'];
+	AddTran($_POST,$file,$file_name,$file_size,$file_type,$myuserid,$myusername);
+}
+elseif($phome=='DelPathFile')//删除目录文件
+{
+	$filename=$_POST['filename'];
+	DelPFile($filename,$myuserid,$myusername);
+}
+elseif($phome=='DelFreeFile')//删除多余附件
+{
+	DelFreeFile($myuserid,$myusername);
+}
+else
+{
+	printerror("您来自的链接不存在","history.go(-1)");
+}
+db_close();
+$empire=null;
+?>
